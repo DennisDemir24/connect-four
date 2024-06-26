@@ -1,6 +1,6 @@
 'use client';
 
-import { GameProvider } from "./context/GameContext";
+import { GameProvider } from "./context/GameContext.js";
 
 
 export function Providers({ children }) {
