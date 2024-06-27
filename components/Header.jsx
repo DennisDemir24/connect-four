@@ -1,19 +1,17 @@
 "use client"
 
-import { useGameContext } from '../context/GameContext'
-import History from './History'
+import Link from "next/link"
 
 const Header = () => {
-  const { currentPlayer, resetGame } = useGameContext()
 
   return (
-    <div className='text-center my-4'>
-      <h1 className='text-3xl font-bold'>Connect 4</h1>
-      <h2 className='text-xl mt-2'>Current Player: {currentPlayer}</h2>
-      <div>
-        <History />
-        <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4' onClick={resetGame}>Reset Game</button>
-      </div>
+    <div className='flex mt-10 ml-10'>
+      <Link
+        className='bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg'
+        href='/'
+      >
+        {'<-'}
+      </Link>
     </div>
   )
 }
