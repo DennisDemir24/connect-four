@@ -8,10 +8,12 @@ const Cell = ({ value, onClick }) => {
   }
 
   return (
-    <div
-      className={`w-12 h-12 border border-gray-400 ${getColor()}`}
-      onClick={onClick}
-    ></div>
+    <div className="w-14 h-14 p-1">
+      <div
+        className={`w-full h-full rounded-full border-2 border-gray-400 ${getColor()} transition-colors duration-200 ease-in-out cursor-pointer`}
+        onClick={onClick}
+      ></div>
+    </div>
   )
 }
 
