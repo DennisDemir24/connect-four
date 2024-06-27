@@ -2,9 +2,12 @@
 
 import { createContext, useState, useEffect, useContext } from 'react';
 
+/* Constants for the board size */
+const BOARD_ROWS = 6;
+const BOARD_COLUMNS = 7;
 
 const initialState = {
-  board: Array(6).fill(null).map(() => Array(7).fill(null)),
+  board: Array(BOARD_ROWS).fill(null).map(() => Array(BOARD_COLUMNS).fill(null)),
   currentPlayer: 'Red',
   history: [],
   winner: null,
