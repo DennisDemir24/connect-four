@@ -1,7 +1,6 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { useGameContext } from '../context/GameContext'
-import Cell from './Cell'
 
 const Board = () => {
   const { board, winner, dropDisc,  currentPlayer, resetGame, undoMove } = useGameContext()
@@ -25,7 +24,9 @@ const Board = () => {
     <div className='flex flex-col items-center mt-12'>
       <div>
         {winner ? (
-          <h2 className='text-2xl font-bold mb-4'>{winner} Wins!</h2>
+          <>
+            <h2 className='text-2xl font-bold mb-4'>{winner} Wins, Play again!</h2>
+          </>
         ) : (
           <h2 className='text-2xl font-bold mb-4'>
             Current Player:
@@ -41,7 +42,7 @@ const Board = () => {
                 <div
                   key={colIndex}
                   className='w-16 h-16 bg-blue-600 rounded-full shadow-inner cursor-pointer flex items-center justify-center'
-                  onClick={() => dropDisc(colIndex)}
+                  onClick={() => handleCellClick(colIndex)}
                 >
                   <div
                     className={`w-16 h-16 rounded-full ${
