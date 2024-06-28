@@ -2,7 +2,7 @@
 
 import { createContext, useState, useEffect, useContext } from 'react';
 
-/* Constants for the board size */
+/* Constants for the board  */
 const BOARD_ROWS = 6;
 const BOARD_COLUMNS = 7;
 
@@ -13,19 +13,20 @@ const initialState = {
   winner: null,
 };
 
-const GameContext = createContext(undefined);
+const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [gameState, setGameState] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedState = localStorage.getItem('gameState');
-      return savedState ? JSON.parse(savedState) : initialState;
-    }
-    return initialState;
-  });
+  const [gameState, setGameState] = useState(initialState);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const savedState = localStorage.getItem('gameState');
+    if (savedState) {
+      setGameState(JSON.parse(savedState));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (gameState !== initialState) {
       localStorage.setItem('gameState', JSON.stringify(gameState));
     }
   }, [gameState]);
@@ -50,57 +51,51 @@ export const GameProvider = ({ children }) => {
     });
   };
 
-
-   const undoMove = () => {
-     if (gameState.history.length === 0) return
-     const lastMove = gameState.history.pop()
-     setGameState({
-       ...lastMove,
-       history: [...gameState.history],
-       winner: null,
-       currentPlayer: lastMove.player,
-     })
-   }
-
-   const resetGame = () => {
-     setGameState(initialState)
-   }
-
-  const checkWinner = (board) => {
-  const checkLine = (a, b, c, d) => {
-    return a !== null && a === b && a === c && a === d;
+  const undoMove = () => {
+    if (gameState.history.length === 0) return;
+    const lastMove = gameState.history.pop();
+    setGameState({
+      ...lastMove,
+      history: [...gameState.history],
+      winner: null,
+      currentPlayer: lastMove.player,
+    });
   };
 
-  // Check all possible winning lines: horizontal, vertical, and both diagonals
-  for (let row = 0; row < board.length; row++) {
-    for (let col = 0; col < board[row].length; col++) {
-      // Check horizontal line
-      if (col <= board[row].length - 4 && checkLine(board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3])) {
-        return board[row][col];
-      }
-      // Check vertical line
-      if (row <= board.length - 4 && checkLine(board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col])) {
-        return board[row][col];
-      }
-      // Check diagonal line (top-left to bottom-right)
-      if (row <= board.length - 4 && col <= board[row].length - 4 && checkLine(board[row][col], board[row + 1][col + 1], board[row + 2][col + 2], board[row + 3][col + 3])) {
-        return board[row][col];
-      }
-      // Check diagonal line (bottom-left to top-right)
-      if (row >= 3 && col <= board[row].length - 4 && checkLine(board[row][col], board[row - 1][col + 1], board[row - 2][col + 2], board[row - 3][col + 3])) {
-        return board[row][col];
+  const resetGame = () => {
+    setGameState(initialState);
+  };
+
+  const checkWinner = (board) => {
+    const checkLine = (a, b, c, d) => {
+      return a !== null && a === b && a === c && a === d;
+    };
+
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        if (col <= board[row].length - 4 && checkLine(board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3])) {
+          return board[row][col];
+        }
+        if (row <= board.length - 4 && checkLine(board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col])) {
+          return board[row][col];
+        }
+        if (row <= board.length - 4 && col <= board[row].length - 4 && checkLine(board[row][col], board[row + 1][col + 1], board[row + 2][col + 2], board[row + 3][col + 3])) {
+          return board[row][col];
+        }
+        if (row >= 3 && col <= board[row].length - 4 && checkLine(board[row][col], board[row - 1][col + 1], board[row - 2][col + 2], board[row - 3][col + 3])) {
+          return board[row][col];
+        }
       }
     }
-  }
 
-  return null;
-};
+    return null;
+  };
 
   return (
     <GameContext.Provider value={{ ...gameState, dropDisc, undoMove, resetGame }}>
       {children}
     </GameContext.Provider>
   );
-}
+};
 
-export const useGameContext = () => useContext(GameContext)
+export const useGameContext = () => useContext(GameContext);
