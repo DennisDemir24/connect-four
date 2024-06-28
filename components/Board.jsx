@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { useGameContext } from '../context/GameContext'
+import Cell from './Cell'
 
 const Board = () => {
   const { board, winner, dropDisc,  currentPlayer, resetGame, undoMove } = useGameContext()
@@ -25,7 +26,9 @@ const Board = () => {
       <div>
         {winner ? (
           <>
-            <h2 className='text-2xl font-bold mb-4'>{winner} Wins, Play again!</h2>
+            <h2 className='text-2xl font-bold mb-4'>
+              {winner} Wins, Play again!
+            </h2>
           </>
         ) : (
           <h2 className='text-2xl font-bold mb-4'>
@@ -39,23 +42,11 @@ const Board = () => {
           {board.map((row, rowIndex) => (
             <React.Fragment key={rowIndex}>
               {row.map((cell, colIndex) => (
-                <div
-                  key={colIndex}
-                  className='w-16 h-16 bg-blue-600 rounded-full shadow-inner cursor-pointer flex items-center justify-center'
+                <Cell
+                  key={`${rowIndex}-${colIndex}`}
+                  cell={cell}
                   onClick={() => handleCellClick(colIndex)}
-                >
-                  <div
-                    className={`w-16 h-16 rounded-full ${
-                      cell
-                        ? cell === 'Red'
-                          ? 'bg-red-500'
-                          : 'bg-yellow-500'
-                        : 'bg-white'
-                    } shadow-inner transition-all duration-300 ease-in-out transform ${
-                      cell ? 'scale-100' : 'scale-90'
-                    }`}
-                  ></div>
-                </div>
+                />
               ))}
             </React.Fragment>
           ))}
