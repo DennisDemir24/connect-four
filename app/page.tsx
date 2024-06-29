@@ -1,6 +1,21 @@
-import Link from "next/link";
+'use client'
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+  
 
 export default function Home() {
+  const [buttonText, setButtonText] = useState('Start Game');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedGame = localStorage.getItem('gameState');
+      if (savedGame) {
+        setButtonText('Continue Game');
+      }
+    }
+  }, []);
+
   return (
     <main className='flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-r from-blue-500 to-purple-500'>
       <section className='flex flex-col items-center text-center font-mono text-white space-y-6'>
@@ -12,7 +27,7 @@ export default function Home() {
         </p>
         <Link href='/game'>
           <button className='bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg'>
-            Start Game
+            {buttonText}
           </button>
         </Link>
       </section>
