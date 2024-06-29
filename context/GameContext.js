@@ -1,21 +1,23 @@
+'use client'
+
 import { createContext, useState, useEffect, useContext } from 'react'
+
+/* Constants for the board  */
+const BOARD_ROWS = 6
+const BOARD_COLUMNS = 7
+
+const initialState = {
+  board: Array(BOARD_ROWS)
+    .fill(null)
+    .map(() => Array(BOARD_COLUMNS).fill(null)),
+  currentPlayer: 'Red',
+  history: [],
+  winner: null,
+}
 
 const GameContext = createContext()
 
 export const GameProvider = ({ children }) => {
-  const [boardRows, setBoardRows] = useState(6)
-  const [boardColumns, setBoardColumns] = useState(7)
-  const [connect, setConnect] = useState(4)
-
-  const initialState = {
-    board: Array(boardRows)
-      .fill(null)
-      .map(() => Array(boardColumns).fill(null)),
-    currentPlayer: 'Red',
-    history: [],
-    winner: null,
-  }
-
   const [gameState, setGameState] = useState(initialState)
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export const GameProvider = ({ children }) => {
       board: newBoard,
       currentPlayer: gameState.currentPlayer === 'Red' ? 'Yellow' : 'Red',
       history: newHistory,
-      winner: checkWinner(newBoard, connect),
+      winner: checkWinner(newBoard),
     })
   }
 
@@ -67,9 +69,10 @@ export const GameProvider = ({ children }) => {
 
   const resetGame = () => {
     setGameState(initialState)
+    localStorage.removeItem('gameState')
   }
 
-  const checkWinner = (board, connect) => {
+  const checkWinner = (board) => {
     const checkLine = (a, b, c, d) => {
       return a !== null && a === b && a === c && a === d
     }
@@ -77,7 +80,7 @@ export const GameProvider = ({ children }) => {
     for (let row = 0; row < board.length; row++) {
       for (let col = 0; col < board[row].length; col++) {
         if (
-          col <= board[row].length - connect &&
+          col <= board[row].length - 4 &&
           checkLine(
             board[row][col],
             board[row][col + 1],
@@ -88,7 +91,7 @@ export const GameProvider = ({ children }) => {
           return board[row][col]
         }
         if (
-          row <= board.length - connect &&
+          row <= board.length - 4 &&
           checkLine(
             board[row][col],
             board[row + 1][col],
@@ -99,8 +102,8 @@ export const GameProvider = ({ children }) => {
           return board[row][col]
         }
         if (
-          row <= board.length - connect &&
-          col <= board[row].length - connect &&
+          row <= board.length - 4 &&
+          col <= board[row].length - 4 &&
           checkLine(
             board[row][col],
             board[row + 1][col + 1],
@@ -111,8 +114,8 @@ export const GameProvider = ({ children }) => {
           return board[row][col]
         }
         if (
-          row >= connect - 1 &&
-          col <= board[row].length - connect &&
+          row >= 3 &&
+          col <= board[row].length - 4 &&
           checkLine(
             board[row][col],
             board[row - 1][col + 1],
@@ -130,15 +133,7 @@ export const GameProvider = ({ children }) => {
 
   return (
     <GameContext.Provider
-      value={{
-        ...gameState,
-        dropDisc,
-        undoMove,
-        resetGame,
-        setBoardRows,
-        setBoardColumns,
-        setConnect,
-      }}
+      value={{ ...gameState, dropDisc, undoMove, resetGame }}
     >
       {children}
     </GameContext.Provider>
